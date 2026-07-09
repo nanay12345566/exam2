@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIN 3013 Exam 1 Practice Quiz</title>
+<style>
+  :root{
+    --ink:#1c2740;
+    --ink-soft:#4a5670;
+    --paper:#f7f6f2;
+    --card:#ffffff;
+    --line:#e3e1d9;
+    --accent:#0e5a8a;
+    --accent-soft:#e8f1f7;
+    --good:#2e7d32;
+    --good-bg:#eaf4ea;
+    --bad:#b3261e;
+    --bad-bg:#fbecea;
+    --gold:#b07d1e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.55;
+    padding-bottom:90px;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:24px 16px}
+  header{margin-bottom:8px}
+  .eyebrow{
+    font-family:'Segoe UI',system-ui,sans-serif;
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);font-weight:700;margin-bottom:6px;
+  }
+  h1{font-size:clamp(24px,5vw,34px);line-height:1.15;margin-bottom:8px}
+  .sub{color:var(--ink-soft);font-size:15px;margin-bottom:18px}
+  .rules{
+    background:var(--accent-soft);border-left:4px solid var(--accent);
+    padding:12px 14px;font-size:14px;border-radius:0 8px 8px 0;margin-bottom:26px;
+  }
+  .ch-head{
+    font-family:'Segoe UI',system-ui,sans-serif;
+    font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--gold);border-bottom:2px solid var(--line);
+    padding-bottom:6px;margin:34px 0 16px;
+  }
+  .qcard{
+    background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:18px 18px 12px;margin-bottom:16px;
+  }
+  .qcard.correct{border-color:var(--good);box-shadow:0 0 0 1px var(--good)}
+  .qcard.wrong{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad)}
+  .qtop{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px}
+  .qnum{
+    font-family:'Segoe UI',system-ui,sans-serif;
+    font-size:12px;font-weight:700;color:var(--ink-soft);letter-spacing:.06em;
+  }
+  .verdict{font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;font-weight:700;display:none}
+  .qcard.correct .verdict{display:inline;color:var(--good)}
+  .qcard.wrong .verdict{display:inline;color:var(--bad)}
+  .stem{font-size:16px;font-weight:700;margin-bottom:4px}
+  .hint{font-size:13.5px;font-style:italic;color:var(--ink-soft);margin-bottom:8px}
+  .opts{list-style:none;margin-top:10px}
+  .opts li{margin-bottom:8px}
+  .opt{
+    display:flex;gap:10px;align-items:flex-start;width:100%;
+    padding:10px 12px;border:1px solid var(--line);border-radius:8px;
+    background:#fff;cursor:pointer;font-size:14.5px;line-height:1.45;
+  }
+  .opt input{margin-top:3px;accent-color:var(--accent);flex-shrink:0}
+  .opt:hover{border-color:var(--accent)}
+  .opt:focus-within{outline:2px solid var(--accent);outline-offset:1px}
+  .qcard.answered-view .opt{cursor:default}
+  .opt.picked{border-color:var(--accent);background:var(--accent-soft)}
+  .opt.is-correct{border-color:var(--good);background:var(--good-bg)}
+  .opt.is-wrong{border-color:var(--bad);background:var(--bad-bg)}
+  .why{
+    display:none;margin:10px 0 6px;padding:10px 12px;font-size:14px;
+    background:var(--paper);border-radius:8px;border:1px dashed var(--line);
+  }
+  .qcard.correct .why,.qcard.wrong .why{display:block}
+  .why b{font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+  .bar{
+    position:fixed;bottom:0;left:0;right:0;
+    background:var(--card);border-top:1px solid var(--line);
+    padding:12px 16px;z-index:50;
+  }
+  .bar-inner{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px}
+  .track{flex:1;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+  .fill{height:100%;width:0%;background:var(--accent);border-radius:99px;transition:width .2s}
+  .count{font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;font-weight:700;color:var(--ink-soft);white-space:nowrap}
+  button.primary{
+    font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;font-weight:700;
+    background:var(--accent);color:#fff;border:none;border-radius:8px;
+    padding:10px 18px;cursor:pointer;white-space:nowrap;
+  }
+  button.primary:disabled{background:#a9b6c2;cursor:not-allowed}
+  button.ghost{
+    font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;font-weight:700;
+    background:#fff;color:var(--accent);border:1.5px solid var(--accent);
+    border-radius:8px;padding:10px 18px;cursor:pointer;
+  }
+  #results{display:none;margin:30px 0 10px}
+  .score-card{
+    background:var(--ink);color:#fff;border-radius:12px;padding:26px 22px;text-align:center;
+  }
+  .score-big{font-size:52px;font-weight:700;line-height:1}
+  .score-label{font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;letter-spacing:.1em;text-transform:uppercase;opacity:.75;margin-top:6px}
+  .gauge{position:relative;height:14px;background:#39466b;border-radius:99px;margin:22px 8px 6px;overflow:visible}
+  .gauge-fill{height:100%;border-radius:99px;background:#7fd08a;transition:width .6s}
+  .gauge-fill.fail{background:#e88f88}
+  .passline{
+    position:absolute;top:-7px;bottom:-7px;left:80%;width:2px;background:var(--gold);
+  }
+  .passline span{
+    position:absolute;top:-20px;left:50%;transform:translateX(-50%);
+    font-family:'Segoe UI',system-ui,sans-serif;font-size:11px;font-weight:700;color:var(--gold);white-space:nowrap;
+  }
+  .verdict-text{margin-top:20px;font-size:15px}
+  .ch-scores{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap;font-family:'Segoe UI',system-ui,sans-serif}
+  .chip{background:#2c3a5e;border-radius:8px;padding:8px 14px;font-size:13px}
+  .chip b{display:block;font-size:17px}
+  .after-actions{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">FIN 3013 · Dr. White · Exam 1 Prep</div>
+    <h1>Chapters 1–3 Practice Quiz</h1>
+    <div class="sub">35 questions · same style as the Canvas quizzes · target: 28 or better</div>
+    <div class="rules">
+      <strong>Rules:</strong> closed notes, one sitting. Answer everything, then hit <em>Grade my quiz</em>.
+      You'll see every question marked right or wrong with an explanation.
+      Answer positions shuffle on every retake, so memorizing letters won't work. Only concepts will.
+    </div>
+  </header>
+
+  <main id="quiz"></main>
+
+  <section id="results">
+    <div class="score-card">
+      <div class="score-big" id="scoreBig">0/35</div>
+      <div class="score-label">Your score</div>
+      <div class="gauge">
+        <div class="gauge-fill" id="gaugeFill"></div>
+        <div class="passline"><span>Target 28</span></div>
+      </div>
+      <div class="verdict-text" id="verdictText"></div>
+      <div class="ch-scores" id="chScores"></div>
+      <div class="after-actions">
+        <button class="ghost" id="reviewBtn" type="button">Review my misses</button>
+        <button class="primary" id="retakeBtn" type="button">Retake (answers reshuffled)</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="bar" id="bar">
+  <div class="bar-inner">
+    <div class="count" id="countLabel">0 / 35 answered</div>
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <button class="primary" id="gradeBtn" type="button" disabled>Grade my quiz</button>
+  </div>
+</div>
+
+<script>
+const DATA = [
+ // ---------- CHAPTER 1 ----------
+ {ch:1, stem:"Which of the following best describes finance?",
+  opts:["Managing ALL resources in a world of certainty","Managing ALL resources in a world of uncertainty","Managing ONE resource ($) in a world of certainty","Managing ONE resource ($) in a world of uncertainty"],
+  ans:3, why:"Finance manages one resource, money, in a world of uncertainty. If the future were certain, finance would be trivial."},
+ {ch:1, stem:"What is the goal of a financial manager?",
+  opts:["Maximize firm revenue","Maximize net income","Maximize cash flows","Maximize shareholder wealth"],
+  ans:3, why:"Always shareholder wealth (the current value per share). Revenue, net income, and even raw cash flow can all be pumped up short-term in ways that hurt owners."},
+ {ch:1, stem:"_____ is the process of selecting the mix of long-term funding while _____ is the process of selecting long-term projects (investments).",
+  opts:["Capital budgeting; capital structure","Capital structure; capital budgeting","Capital structure; working capital management","Working capital management; capital budgeting"],
+  ans:1, why:"Capital structure = the funding mix (debt vs equity). Capital budgeting = choosing long-term projects. Dr. White loves flipping the blank order, read carefully."},
+ {ch:1, stem:"_____ is the process of managing a firm's short-term assets and short-term liabilities.",
+  opts:["Capital budgeting","Capital structure","Working capital management","Agency management"],
+  ans:2, why:"Working capital management = the day-to-day handling of current assets and current liabilities."},
+ {ch:1, stem:"Which type of firm is guaranteed to have no agency problems? Which type of firm has the most agency problems?",
+  hint:"Think about which firm separates who provides the money from who makes the decisions.",
+  opts:["Sole proprietorship; corporation","Sole proprietorship; partnership","Corporation; sole proprietorship","Partnership; sole proprietorship"],
+  ans:0, why:"A sole proprietor owns AND decides, so no separation, no agency problem. A corporation has the biggest gap between owners (shareholders) and decision-makers (managers)."},
+ {ch:1, stem:"Which of the following best describes financial markets?",
+  opts:["A market where buyers and sellers of financial securities (stocks and bonds) come together to transfer funds","A market where buyers and sellers of real assets (current and fixed assets) come together to transfer funds","A market where buyers and sellers of financial securities come together to achieve diversification","A market where buyers and sellers of real assets come together to achieve diversification"],
+  ans:0, why:"Financial markets transfer funds via financial securities (stocks and bonds). Real assets are not what trades there."},
+ {ch:1, stem:"Which of the following is true about a sole proprietorship?",
+  opts:["Easy to start; owner keeps all profits; limited liability; unlimited life","Easy to start; owner keeps all profits; unlimited liability; life limited to the owner's life","Hard to start; profits shared; unlimited liability; unlimited life","Easy to start; profits shared; limited liability; life limited to the owner's life"],
+  ans:1, why:"Cheap and easy to form, owner keeps everything, but the owner is personally on the hook (unlimited liability) and the business dies with the owner."},
+ {ch:1, stem:"Which of the following is an advantage of the corporate form of organization?",
+  opts:["Double taxation of dividends","Separation of ownership and management","Limited liability for owners and easier transfer of ownership","It is the cheapest and simplest form of business to create"],
+  ans:2, why:"Limited liability and easy transfer of ownership are the big wins. Double taxation is a disadvantage, and the ownership/management separation is what creates agency problems."},
+ {ch:1, stem:"The agency problem refers to...",
+  opts:["The conflict of interest between stockholders (principals) and managers (agents)","The conflict of interest between creditors and suppliers","The cost of hiring an employment agency to staff the firm","The conflict between federal and state regulators"],
+  ans:0, why:"Shareholders are the principals, managers are the agents. Their conflict of interest is the agency problem."},
+ {ch:1, stem:"In general, which of the following is MOST important to finance?",
+  hint:"It's the thing finance cares about but the accountants... not so much.",
+  opts:["Revenue","Profit","Cash flows","Stock price"],
+  ans:2, why:"Cash flows. Accounting focuses on net income; finance runs on cash, because cash pays the bills, the creditors, and the shareholders."},
+
+ // ---------- CHAPTER 2 ----------
+ {ch:2, stem:"Which of the following best describes a balance sheet?",
+  opts:["Snapshot statement showing revenues - expenses = NI","Flow statement showing revenues - expenses = NI","Snapshot statement showing A = L + E","Flow statement showing A = L + E"],
+  ans:2, why:"Balance sheet = snapshot at one point in time, showing Assets = Liabilities + Equity."},
+ {ch:2, stem:"Which of the following best describes an income statement?",
+  opts:["Snapshot statement showing revenues - expenses = NI","Flow statement showing revenues - expenses = NI","Snapshot statement showing A = L + E","Flow statement showing A = L + E"],
+  ans:1, why:"Income statement = flow over a period, showing Revenues - Expenses = Net Income. Snapshot vs flow is a guaranteed exam pairing."},
+ {ch:2, stem:"What determines the order of accounts on the balance sheet?",
+  opts:["Liquidity; highest liquidity assets are listed first","Liquidity; lowest liquidity assets are listed first","Solvency; highest solvency assets listed first","Solvency; lowest solvency assets listed first"],
+  ans:0, why:"Assets are listed by liquidity, most liquid first. That's why cash sits at the top."},
+ {ch:2, stem:"What is true about assets in respect to returns and liquidity?",
+  opts:["There is a tradeoff between returns and liquidity; high liquidity assets generate lower returns","There is a tradeoff between returns and liquidity; high liquidity assets generate higher returns","There is NOT a tradeoff; high liquidity assets generate lower returns","There is NOT a tradeoff; high liquidity assets generate higher returns"],
+  ans:0, why:"There IS a tradeoff. Cash is super liquid but earns almost nothing. Fixed assets are illiquid but generate the returns."},
+ {ch:2, stem:"Which of the following is true about debt and equity on the balance sheet?",
+  opts:["Debt is a promise, listed first; equity is a residual, listed second; both at market values","Equity is a residual, listed first; debt is a promise, listed second; both at market values","Debt is a promise, listed first; equity is a residual, listed second; both at book values","Equity is a residual, listed first; debt is a promise, listed second; both at book values"],
+  ans:2, why:"Debt = fixed promise, gets paid first. Equity = whatever is left over (residual). And the balance sheet records BOOK values, not market values."},
+ {ch:2, stem:"Which of the following best describes retained earnings?",
+  opts:["Accumulated earnings of the firm after paying dividends since inception","Accumulated earnings of the firm after paying dividends this year","Accumulated cash of the firm after paying dividends since inception","Accumulated cash of the firm after paying dividends this year"],
+  ans:0, why:"Two traps in one question: retained earnings are EARNINGS not cash, and they accumulate SINCE INCEPTION, not just this year."},
+ {ch:2, stem:"What is true about revenues and expenses?",
+  opts:["Revenues recorded when earned (recognition principle); expenses recorded when incurred (matching principle)","Revenues recorded when earned (matching principle); expenses recorded when incurred (recognition principle)","Revenues recorded when cash is received (recognition principle); expenses recorded when cash is paid (matching principle)","Revenues recorded when cash is received (matching principle); expenses recorded when cash is paid (recognition principle)"],
+  ans:0, why:"Recognition principle: record revenue when EARNED. Matching principle: match expenses to the revenue they helped create. Neither waits for cash to move."},
+ {ch:2, stem:"Which of the following is true about expenses on the income statement?",
+  opts:["Depreciation is noncash; taxes are cash; depreciation comes before taxes, which is good since it results in less taxes","Depreciation is noncash; taxes are cash; depreciation comes after taxes, which is good since it results in less taxes","Depreciation is cash; taxes are noncash; depreciation comes before taxes, which results in less taxes","Depreciation is cash; taxes are noncash; depreciation comes after taxes, which results in less taxes"],
+  ans:0, why:"Depreciation is a noncash expense sitting ABOVE taxes on the income statement, so it shrinks taxable income and the firm pays less real cash tax. Good for the firm."},
+ {ch:2, stem:"What is true about net income?",
+  opts:["It belongs to shareholders; it IS cash; used to pay dividends or kept as retained earnings","It belongs to shareholders; it IS NOT cash; used to pay dividends or kept as retained earnings","It belongs to the firm; it IS cash; used to buy bonds or stocks","It belongs to the firm; it IS NOT cash; used to buy bonds or stocks"],
+  ans:1, why:"Net income belongs to shareholders but is NOT cash (a noncash expense, depreciation, was deducted to compute it). It either goes out as dividends or stays as retained earnings."},
+ {ch:2, stem:"What is true about costs in the short run vs the long run?",
+  hint:"Think of the rent example. Rent is fixed for the length of your lease... but what can happen after the lease ends?",
+  opts:["In the short run, a firm can have variable and fixed costs. In the long run, all costs are variable.","In the short run, a firm can have variable and fixed costs. In the long run, all costs are fixed.","In the long run, a firm can have variable and fixed costs. In the short run, all costs are variable.","In the long run, a firm can have variable and fixed costs. In the short run, all costs are fixed."],
+  ans:0, why:"Short run: some costs are locked in (rent during the lease). Long run: every commitment expires eventually, so ALL costs become variable."},
+ {ch:2, stem:"A firm has EBIT of $500, depreciation of $100, and taxes of $150. What is operating cash flow (OCF)?",
+  hint:"OCF = EBIT + Depreciation - Taxes.",
+  opts:["$250","$450","$550","$750"],
+  ans:1, why:"OCF = 500 + 100 - 150 = $450. Add depreciation back because it's noncash; subtract taxes because they're paid in real cash."},
+ {ch:2, stem:"A firm began the year with net fixed assets of $1,000 and ended with $1,200. Depreciation was $150. What is net capital spending (CAPEX)?",
+  opts:["$50","$200","$350","$400"],
+  ans:2, why:"NCS = Ending NFA - Beginning NFA + Depreciation = 1,200 - 1,000 + 150 = $350. Add depreciation back because the NFA account was already reduced by it."},
+ {ch:2, stem:"A firm paid $90 in interest and raised $40 in net new borrowing. It also paid $60 in dividends and raised $25 in net new equity. What are CF to creditors and CF to stockholders?",
+  opts:["CF to creditors = $130; CF to stockholders = $85","CF to creditors = $50; CF to stockholders = $35","CF to creditors = $50; CF to stockholders = $85","CF to creditors = $130; CF to stockholders = $35"],
+  ans:1, why:"CF to creditors = interest - net new borrowing = 90 - 40 = $50. CF to SH = dividends - net new equity = 60 - 25 = $35. Both are money paid OUT minus money raised."},
+
+ // ---------- CHAPTER 3 ----------
+ {ch:3, stem:"Which of the following is a SOURCE of cash?",
+  hint:"Sources: decrease an asset or increase a liability/equity. Uses: the opposite.",
+  opts:["An increase in accounts receivable","A decrease in accounts payable","An increase in inventory","An increase in long-term debt"],
+  ans:3, why:"Borrowing more (increasing a liability) brings cash IN. Growing receivables or inventory ties cash up, and paying down payables sends cash out. Those are uses."},
+ {ch:3, stem:"On a common-size balance sheet, each item is a percentage of _____. On a common-size income statement, each item is a percentage of _____.",
+  opts:["Total assets; sales","Sales; total assets","Total equity; net income","Total liabilities; COGS"],
+  ans:0, why:"Balance sheet items ÷ total assets. Income statement items ÷ sales."},
+ {ch:3, stem:"Why do we use common-size statements and financial ratios?",
+  opts:["To make firms of different sizes comparable and to spot trends over time","To calculate the exact market value of the firm's stock","To eliminate the need for a statement of cash flows","To guarantee the firm pays less in taxes"],
+  ans:0, why:"Standardizing strips out size so you can compare a corner store to a giant, and track one firm across years."},
+ {ch:3, stem:"Which group of ratios measures a firm's ability to pay its bills over the SHORT run without undue stress?",
+  opts:["Long-term solvency (leverage) ratios","Short-term solvency (liquidity) ratios","Asset management (turnover) ratios","Profitability ratios"],
+  ans:1, why:"Short-term solvency = liquidity ratios: current, quick, and cash ratio. Leverage ratios answer the long-run debt question."},
+ {ch:3, stem:"A firm has current assets of $4,200 (including inventory of $1,800) and current liabilities of $2,100. What are the current ratio and quick ratio?",
+  opts:["Current ratio = 2.00; quick ratio = 1.14","Current ratio = 2.00; quick ratio = 2.86","Current ratio = 0.50; quick ratio = 1.14","Current ratio = 1.14; quick ratio = 2.00"],
+  ans:0, why:"Current = 4,200 ÷ 2,100 = 2.00. Quick = (4,200 - 1,800) ÷ 2,100 = 1.14. The quick ratio strips out inventory, the least liquid current asset."},
+ {ch:3, stem:"A firm has total assets of $10,000 and total equity of $4,000. What are the total debt ratio, debt-equity ratio, and equity multiplier?",
+  opts:["TD = 0.40; D/E = 0.67; EM = 1.67","TD = 0.60; D/E = 1.50; EM = 2.50","TD = 0.60; D/E = 2.50; EM = 1.50","TD = 0.40; D/E = 1.50; EM = 2.50"],
+  ans:1, why:"Debt = 10,000 - 4,000 = 6,000. TD = 6,000/10,000 = 0.60. D/E = 6,000/4,000 = 1.50. EM = 10,000/4,000 = 2.50. Shortcut: EM = 1 + D/E."},
+ {ch:3, stem:"A firm has EBIT of $800 and interest expense of $200. What is the times interest earned (TIE) ratio, and what does it measure?",
+  opts:["TIE = 4.0; how well the firm covers its interest obligations","TIE = 4.0; how quickly the firm collects receivables","TIE = 0.25; how well the firm covers its interest obligations","TIE = 0.25; how quickly the firm sells inventory"],
+  ans:0, why:"TIE = EBIT ÷ Interest = 800 ÷ 200 = 4.0. The firm earns $4 of operating income per $1 of interest owed."},
+ {ch:3, stem:"A firm has COGS of $9,000 and inventory of $1,500. What are inventory turnover and days' sales in inventory?",
+  opts:["Turnover = 6.0 times; about 61 days","Turnover = 6.0 times; about 6 days","Turnover = 0.17 times; about 61 days","Turnover = 61 times; about 6 days"],
+  ans:0, why:"Turnover = 9,000 ÷ 1,500 = 6 times per year. Days = 365 ÷ 6 ≈ 61 days to sell through inventory once."},
+ {ch:3, stem:"A firm has sales of $12,000, net income of $600, total assets of $10,000, and total equity of $4,000. What are profit margin, ROA, and ROE?",
+  opts:["PM = 5%; ROA = 6%; ROE = 15%","PM = 5%; ROA = 15%; ROE = 6%","PM = 6%; ROA = 5%; ROE = 15%","PM = 15%; ROA = 6%; ROE = 5%"],
+  ans:0, why:"PM = 600/12,000 = 5%. ROA = 600/10,000 = 6%. ROE = 600/4,000 = 15%. ROE beats ROA because equity is smaller than assets. That gap is leverage."},
+ {ch:3, stem:"Using the DuPont identity, ROE equals...",
+  opts:["Profit margin × total asset turnover × equity multiplier","Profit margin × inventory turnover × debt-equity ratio","ROA × total asset turnover","Net income ÷ total assets"],
+  ans:0, why:"DuPont: ROE = PM × TAT × EM. It also equals ROA × EM."},
+ {ch:3, stem:"Same firm as before (PM = 5%, sales $12,000, total assets $10,000, EM = 2.50). What is total asset turnover, and what ROE does DuPont give?",
+  opts:["TAT = 1.20; ROE = 5% × 1.20 × 2.50 = 15%","TAT = 0.83; ROE = 5% × 0.83 × 2.50 = 10.4%","TAT = 1.20; ROE = 5% × 1.20 = 6%","TAT = 2.50; ROE = 5% × 2.50 × 1.20 = 15%"],
+  ans:0, why:"TAT = 12,000 ÷ 10,000 = 1.20. ROE = .05 × 1.20 × 2.50 = 15%, matching the direct NI/TE answer. DuPont checks itself."},
+ {ch:3, stem:"Per the DuPont identity, ROE can rise because of operating efficiency, asset use efficiency, or financial leverage. Which ratio maps to each?",
+  opts:["Profit margin (operating); total asset turnover (asset use); equity multiplier (leverage)","Total asset turnover (operating); profit margin (asset use); equity multiplier (leverage)","Equity multiplier (operating); total asset turnover (asset use); profit margin (leverage)","Profit margin (operating); equity multiplier (asset use); total asset turnover (leverage)"],
+  ans:0, why:"PM = profit per $1 of sales (operating efficiency). TAT = sales per $1 of assets (asset use). EM = assets per $1 of equity (leverage)."}
+];
+
+const PASS = 28;
+let order = [];        // per-question option order (array of index arrays)
+let graded = false;
+
+function shuffle(a){
+  const arr = a.slice();
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function build(){
+  graded = false;
+  order = DATA.map(q => shuffle([0,1,2,3]));
+  const quiz = document.getElementById('quiz');
+  quiz.innerHTML = '';
+  let lastCh = 0;
+  const chNames = {1:'Chapter 1 · Introduction to Financial Management',2:'Chapter 2 · Financial Statements, Taxes, and Cash Flow',3:'Chapter 3 · Working With Financial Statements'};
+  DATA.forEach((q, qi) => {
+    if(q.ch !== lastCh){
+      const h = document.createElement('div');
+      h.className = 'ch-head';
+      h.textContent = chNames[q.ch];
+      quiz.appendChild(h);
+      lastCh = q.ch;
+    }
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.id = 'q' + qi;
+    let inner = `<div class="qtop"><span class="qnum">QUESTION ${qi+1} OF 35</span><span class="verdict"></span></div>`;
+    inner += `<div class="stem">${q.stem}</div>`;
+    if(q.hint) inner += `<div class="hint">Hint: ${q.hint}</div>`;
+    inner += '<ul class="opts">';
+    order[qi].forEach(oi => {
+      inner += `<li><label class="opt" data-oi="${oi}"><input type="radio" name="q${qi}" value="${oi}"><span>${q.opts[oi]}</span></label></li>`;
+    });
+    inner += '</ul>';
+    inner += `<div class="why"><b>Why:</b> ${q.why}</div>`;
+    card.innerHTML = inner;
+    quiz.appendChild(card);
+  });
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('gradeBtn').style.display = '';
+  updateProgress();
+  quiz.querySelectorAll('input[type=radio]').forEach(r => {
+    r.addEventListener('change', e => {
+      if(graded){ e.preventDefault(); return; }
+      const card = e.target.closest('.qcard');
+      card.querySelectorAll('.opt').forEach(o => o.classList.remove('picked'));
+      e.target.closest('.opt').classList.add('picked');
+      updateProgress();
+    });
+  });
+}
+
+function answeredCount(){
+  let n = 0;
+  for(let i = 0; i < DATA.length; i++){
+    if(document.querySelector(`input[name=q${i}]:checked`)) n++;
+  }
+  return n;
+}
+
+function updateProgress(){
+  const n = answeredCount();
+  document.getElementById('countLabel').textContent = n + ' / 35 answered';
+  document.getElementById('fill').style.width = (n / 35 * 100) + '%';
+  document.getElementById('gradeBtn').disabled = (n < 35) || graded;
+  document.getElementById('gradeBtn').textContent = n < 35 ? `Grade my quiz (${35 - n} left)` : 'Grade my quiz';
+}
+
+function grade(){
+  if(graded) return;
+  graded = true;
+  let score = 0;
+  const chTotals = {1:{r:0,t:0},2:{r:0,t:0},3:{r:0,t:0}};
+  DATA.forEach((q, qi) => {
+    const card = document.getElementById('q' + qi);
+    card.classList.add('answered-view');
+    const picked = document.querySelector(`input[name=q${qi}]:checked`);
+    const pickedVal = parseInt(picked.value, 10);
+    const isRight = pickedVal === q.ans;
+    chTotals[q.ch].t++;
+    if(isRight){ score++; chTotals[q.ch].r++; }
+    card.classList.add(isRight ? 'correct' : 'wrong');
+    card.querySelector('.verdict').textContent = isRight ? '✓ CORRECT' : '✗ WRONG';
+    card.querySelectorAll('.opt').forEach(o => {
+      const oi = parseInt(o.dataset.oi, 10);
+      o.querySelector('input').disabled = true;
+      if(oi === q.ans) o.classList.add('is-correct');
+      else if(oi === pickedVal) o.classList.add('is-wrong');
+    });
+  });
+  document.getElementById('scoreBig').textContent = score + '/35';
+  const gf = document.getElementById('gaugeFill');
+  gf.style.width = (score / 35 * 100) + '%';
+  gf.classList.toggle('fail', score < PASS);
+  const v = document.getElementById('verdictText');
+  if(score >= 32) v.textContent = 'Exam ready. Retake once more tomorrow to confirm it sticks, then move to Chapters 5 and 6.';
+  else if(score >= PASS) v.textContent = 'On target. Review your misses below, then retake. The reshuffled answers will prove you know the concepts, not the letters.';
+  else v.textContent = 'Below the 28 target. Not a disaster, it is a map. Review every miss below, re-read only those packet sections, then retake this quiz before doing anything else.';
+  const chBox = document.getElementById('chScores');
+  chBox.innerHTML = '';
+  [1,2,3].forEach(c => {
+    const d = document.createElement('div');
+    d.className = 'chip';
+    d.innerHTML = `<b>${chTotals[c].r}/${chTotals[c].t}</b>Chapter ${c}`;
+    chBox.appendChild(d);
+  });
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('gradeBtn').style.display = 'none';
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+}
+
+document.getElementById('gradeBtn').addEventListener('click', grade);
+document.getElementById('retakeBtn').addEventListener('click', () => {
+  build();
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+document.getElementById('reviewBtn').addEventListener('click', () => {
+  const firstWrong = document.querySelector('.qcard.wrong');
+  if(firstWrong) firstWrong.scrollIntoView({behavior:'smooth'});
+});
+
+build();
+</script>
+</body>
+</html>
